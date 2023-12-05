@@ -18,10 +18,12 @@ func gistView(w http.ResponseWriter, r *http.Request) {
 }
 
 func gistCreate(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		w.Header().Set("Allow", "POST")
-		w.WriteHeader(405)
-		w.Write([]byte("Method not Allowed"))
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+
+		// Use the http.Error() function to send a 405 status code and
+		// "Method not allowed string" as the response body
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 	w.Write([]byte("Create a new gist..."))

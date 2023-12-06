@@ -8,6 +8,7 @@ import (
 
 func main() {
 
+	// run $ go run ./cmd/web -addr=":PORT NUMBER" with valid port number to set server address
 	addr := flag.String("addr", ":4000", "HTTP network address")
 
 	flag.Parse()

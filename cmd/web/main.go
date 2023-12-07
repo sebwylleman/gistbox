@@ -7,6 +7,10 @@ import (
 	"os"
 )
 
+type application struct {
+	logger *slog.Logger
+}
+
 func main() {
 
 	// Run $ go run ./cmd/web -addr=":PORT NUMBER" with valid port number to set server address.
@@ -16,14 +20,18 @@ func main() {
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
+	app := &application{
+		logger: logger,
+	}
+
 	mux := http.NewServeMux()
 
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
-	mux.HandleFunc("/", home)
-	mux.HandleFunc("/gist/view", gistView)
-	mux.HandleFunc("/gist/create", gistCreate)
+	mux.HandleFunc("/", app.home)
+	mux.HandleFunc("/gist/view", app.gistView)
+	mux.HandleFunc("/gist/create", app.gistCreate)
 
 	logger.Info("starting server", "addr", *addr)
 

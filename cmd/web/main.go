@@ -2,8 +2,9 @@ package main
 
 import (
 	"flag"
-	"log"
+	"log/slog"
 	"net/http"
+	"os"
 )
 
 func main() {
@@ -11,8 +12,9 @@ func main() {
 	// Run $ go run ./cmd/web -addr=":PORT NUMBER" with valid port number to set server address.
 	// => an idiomatic way of managing configuration settings for this app at runtime
 	addr := flag.String("addr", ":4000", "HTTP network address")
-
 	flag.Parse()
+
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
 	mux := http.NewServeMux()
 
@@ -23,8 +25,9 @@ func main() {
 	mux.HandleFunc("/gist/view", gistView)
 	mux.HandleFunc("/gist/create", gistCreate)
 
-	log.Printf("starting server on %s", *addr)
+	logger.Info("starting server", "addr", *addr)
 
 	err := http.ListenAndServe(*addr, mux)
-	log.Fatal(err)
+	logger.Error(err.Error())
+	os.Exit(1)
 }
